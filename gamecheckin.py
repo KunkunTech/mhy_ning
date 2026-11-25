@@ -84,11 +84,12 @@ class GameCheckin:
                             headers=self.headers)
         data = req.json()
         if data["retcode"] != 0:
+            log.info(f"签到信息接口返回 retcode={data.get('retcode')} message={data.get('message')}")
             if not update and login.update_cookie_token():
                 self.set_headers()
                 return self.is_sign(region, uid, True)
             log.warning("获取账号签到信息失败！")
-            log.debug(req.text)
+            log.warning(f"接口返回：retcode={data.get('retcode')} message={data.get('message')}")
             config.config["games"]["cn"][self.game_mid]["auto_checkin"] = False
             config.save_config()
             raise CookieError("BBS Cookie Errror")
